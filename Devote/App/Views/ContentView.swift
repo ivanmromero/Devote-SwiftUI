@@ -65,6 +65,8 @@ struct ContentView: View {
                     
                     Button {
                         addItem()
+                        task = ""
+                        hideKeyboard()
                     } label: {
                         Spacer()
                         Text("Save")
@@ -97,16 +99,10 @@ struct ContentView: View {
             .navigationTitle("Daily Tasks")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarTrailing) {
                     EditButton()
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
             }
-            Text("Select an item")
         }
     }
 }
