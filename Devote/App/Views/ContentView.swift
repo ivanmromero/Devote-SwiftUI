@@ -10,12 +10,8 @@ import CoreData
 
 struct ContentView: View {
     // MARK: - PROPERTIES
-
     @State var task: String = ""
-    
-    private var isButtonDisabled: Bool {
-        task.isEmpty
-    }
+    @State private var showNewTaskItem: Bool = false
     
     // MARK: - FETCHING DATA
     @Environment(\.managedObjectContext) private var viewContext
@@ -25,22 +21,6 @@ struct ContentView: View {
     private var items: FetchedResults<Item>
 
     // MARK: - FUNCTIONS
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-            newItem.task = task
-            newItem.id = UUID()
-            newItem.completion = false
-            do {
-                try viewContext.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { items[$0] }.forEach(viewContext.delete)
@@ -54,34 +34,36 @@ struct ContentView: View {
         }
     }
     
+    // MARK: - BODY
     var body: some View {
         NavigationStack {
             ZStack {
+                // MARK: - MAIN VIEW
+                
+                
                 VStack {
-                    VStack(alignment: .center, spacing: 16) {
-                        TextField("New task", text: $task)
-                            .padding()
-                            .background(Color(UIColor.systemGray6))
-                            .clipShape(.rect(cornerRadius: 10))
-                        
-                        Button {
-                            addItem()
-                            task = ""
-                            hideKeyboard()
-                        } label: {
-                            Spacer()
-                            Text("Save")
-                            Spacer()
-                        }
-                        .disabled(isButtonDisabled)
-                        .padding()
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .background(isButtonDisabled ? .gray : .pink)
-                        .clipShape(.rect(cornerRadius: 10))
-                    }
-                    .padding()
+                    // MARK: - HEADER
+                    Spacer(minLength: 80)
                     
+                    // MARK: - NEW TASK BUTTON
+                    Button {
+                        showNewTaskItem = true
+                    } label: {
+                        Image(systemName: "plus.circle")
+                            .font(.system(size: 30, weight: .semibold, design: .rounded))
+                        Text("New Task")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 15)
+                    .background(
+                        LinearGradient(colors: [.pink, .blue], startPoint: .leading, endPoint: .trailing)
+                            .clipShape(Capsule())
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 8, x: 0.0, y: 4.0)
+                    
+                    // MARK: - TASK
                     List {
                         ForEach(items) { item in
                             VStack(alignment: .leading) {
@@ -102,6 +84,17 @@ struct ContentView: View {
                     .padding(.vertical, 0)
                     .frame(maxWidth: 640)
                 }
+                
+                // MARK: - NEW TASK ITEM
+                if showNewTaskItem {
+                    BlankView()
+                        .onTapGesture {
+                            withAnimation {
+                                showNewTaskItem = false
+                            }
+                        }
+                    NewTaskItemView(isShowing: $showNewTaskItem)
+                }
             }
             .navigationTitle("Daily Tasks")
             .navigationBarTitleDisplayMode(.large)
@@ -117,8 +110,7 @@ struct ContentView: View {
     }
 }
 
-
-
+// MARK: - PREVIEW
 #Preview {
     ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }
