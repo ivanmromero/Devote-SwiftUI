@@ -55,45 +55,52 @@ struct ContentView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                VStack(alignment: .center, spacing: 16) {
-                    TextField("New task", text: $task)
-                        .padding()
-                        .background(Color(UIColor.systemGray6))
-                        .clipShape(.rect(cornerRadius: 10))
-                    
-                    Button {
-                        addItem()
-                        task = ""
-                        hideKeyboard()
-                    } label: {
-                        Spacer()
-                        Text("Save")
-                        Spacer()
-                    }
-                    .disabled(isButtonDisabled)
-                    .padding()
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .background(isButtonDisabled ? .gray : .pink)
-                    .clipShape(.rect(cornerRadius: 10))
-                }
-                .padding()
-                
-                List {
-                    ForEach(items) { item in
-                        VStack(alignment: .leading) {
-                            Text(item.task ?? "")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            
-                            Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                                .font(.footnote)
-                                .foregroundStyle(.gray)
+        NavigationStack {
+            ZStack {
+                VStack {
+                    VStack(alignment: .center, spacing: 16) {
+                        TextField("New task", text: $task)
+                            .padding()
+                            .background(Color(UIColor.systemGray6))
+                            .clipShape(.rect(cornerRadius: 10))
+                        
+                        Button {
+                            addItem()
+                            task = ""
+                            hideKeyboard()
+                        } label: {
+                            Spacer()
+                            Text("Save")
+                            Spacer()
                         }
+                        .disabled(isButtonDisabled)
+                        .padding()
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .background(isButtonDisabled ? .gray : .pink)
+                        .clipShape(.rect(cornerRadius: 10))
                     }
-                    .onDelete(perform: deleteItems)
+                    .padding()
+                    
+                    List {
+                        ForEach(items) { item in
+                            VStack(alignment: .leading) {
+                                Text(item.task ?? "")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                
+                                Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+                                    .font(.footnote)
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+                        .onDelete(perform: deleteItems)
+                    }
+                    .listStyle(InsetGroupedListStyle())
+                    .scrollContentBackground(.hidden)
+                    .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.3), radius: 12)
+                    .padding(.vertical, 0)
+                    .frame(maxWidth: 640)
                 }
             }
             .navigationTitle("Daily Tasks")
@@ -103,6 +110,9 @@ struct ContentView: View {
                     EditButton()
                 }
             }
+            .background(BackgroundImageView())
+            .background(backgroundGradient.ignoresSafeArea(.all))
+            
         }
     }
 }
