@@ -33,8 +33,3 @@ struct ListRowItemView: View {
         })
     }
 }
-
-//// MARK: - PREVIEW
-//#Preview {
-//    ListRowItemView()
-//}
