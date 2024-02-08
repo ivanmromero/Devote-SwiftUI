@@ -9,6 +9,9 @@ import SwiftUI
 
 struct BlankView: View {
     // MARK: - PROPERTIES
+    var backgroundColor: Color
+    var backgroundOpacity: Double
+    
     // MARK: - FUNCTIONS
     // MARK: - BODY
     var body: some View {
@@ -16,13 +19,16 @@ struct BlankView: View {
             Spacer()
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-        .background(.black)
-        .opacity(0.5)
+        .background(backgroundColor)
+        .opacity(backgroundOpacity)
+        .blendMode(.overlay)
         .ignoresSafeArea(.all)
     }
 }
 
 // MARK: - PREVIEW
 #Preview {
-    BlankView()
+    BlankView(backgroundColor: .black, backgroundOpacity: 0.3)
+        .background(BackgroundImageView())
+        .background(backgroundGradient.ignoresSafeArea(.all))
 }
